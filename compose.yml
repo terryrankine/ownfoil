@@ -1,6 +1,6 @@
 services:
   ownfoil:
-    image: ownfoil:pr262
+    image: ownfoil:develop
     container_name: ownfoil
     environment:
       - PUID=1000
@@ -10,6 +10,7 @@ services:
       - ./data:/app/data
       - ./config:/app/config
       - ./file_watcher.py:/app/file_watcher.py  # disable polling observer (burns CPU on NFS)
+      - ./db.py:/app/db.py  # WAL mode + busy_timeout for multi-worker concurrency
       #- ./cyberfoil_patch.py:/app/clients/cyberfoil.py  # disabled: PR 262 refactored clients
       #- ./index.html:/app/templates/index.html          # disabled: PR 262 has new UI
     networks:
