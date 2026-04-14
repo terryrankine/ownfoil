@@ -1,0 +1,27 @@
+services:
+  ownfoil:
+    image: ownfoil:pr262
+    container_name: ownfoil
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - /mnt/rannas/emulation/switch:/games
+      - ./data:/app/data
+      - ./config:/app/config
+      - ./file_watcher.py:/app/file_watcher.py  # disable polling observer (burns CPU on NFS)
+      #- ./cyberfoil_patch.py:/app/clients/cyberfoil.py  # disabled: PR 262 refactored clients
+      #- ./index.html:/app/templates/index.html          # disabled: PR 262 has new UI
+    networks:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ownfoil.rule=Host(`ownfoil.furfurfurley.org`)"
+      - "traefik.http.routers.ownfoil.entrypoints=websecure"
+      - "traefik.http.routers.ownfoil.tls.certresolver=cloudflare"
+      - "traefik.http.services.ownfoil.loadbalancer.server.port=8465"
+    restart: unless-stopped
+
+networks:
+  traefik:
+    external: true
