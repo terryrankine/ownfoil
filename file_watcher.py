@@ -8,6 +8,13 @@ import logging
 logger = logging.getLogger('main')
 
 
+class _NoOpEventHandler:
+    """Stub so library.py references to watcher.event_handler don't crash."""
+    def __init__(self):
+        self.ignored_events_lock = __import__('threading').Lock()
+        self.ignored_events_tuples = set()
+
+
 class Watcher:
     """File watcher stub — polling disabled to avoid CPU waste on NFS mounts.
     Library changes are detected via the scheduled scan instead."""
@@ -16,6 +23,7 @@ class Watcher:
         self.directories = set()
         self.callback = callback
         self.scheduler_map = {}
+        self.event_handler = _NoOpEventHandler()
 
     def run(self):
         logger.info('File watcher disabled (polling observer removed).')
